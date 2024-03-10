@@ -57,7 +57,6 @@ https://github.com/jochen1727/
 .NOTES
 possibilite de se connecter a distance avec la commande invoke-command -computer $adresseduserveurad -script {cp_ad_createuser} ou une session a distance avec la commande enter-pssession
 #>
-
 param (
   [parameter(mandatory=$true)]
   [string]$prenom,
@@ -79,11 +78,19 @@ param (
 )
 begin
 {
-#importation module active-directory
+#installations et importations modules si besoins
+Add-WindowsFeature -Name "RSAT-AD-PowerShell" –IncludeAllSubFeature
 Import-Module ActiveDirectory
-Import-Module azuread
-import-module msonline
-Import-Module ADSync
+$modules=@("azuread","msonline","Microsoft.Graph")
+foreach ($module in $modules)
+{
+    if (-not (Get-Module -Name $module -ListAvailable))
+ {
+        Install-Module -Name $module -Force -AllowClobber
+}
+Import-Module $module
+}
+
 #fonction affichage lignes
 function line
 {
@@ -173,11 +180,7 @@ new-item "D:\Rocard\Commun\Scan\Individuel\$using:dossier_utilisateur" -Type dir
 }
 end
 {
-# Récapitulatif utilisateur
-Write-host "Recapitulatif utisateur :"
-get-aduser -identity $sam_chara -Properties * | format-list *
 #Forcer synchro AD connect
-Write-Host "synchro en cours sur azure AD, attendre 5 minutes"
 Start-ADSyncSyncCycle -PolicyType Delta
 Start-Sleep -Seconds 300
 #Connect-MsolService
@@ -185,7 +188,16 @@ Connect-MsolService -credential $identifiantmicrosoftentra
 $licenseOption = New-MsolLicenseOptions -AccountSkuId "crowerocardfr:O365_BUSINESS_ESSENTIALS" -DisabledPlans MCOSTANDARD,YAMMER_ENTERPRISE,SWAY,PROJECTWORKMANAGEMENT,POWERAPPS_O365_P1,FLOW_O365_P1,FORMS_PLAN_E1,STREAM_O365_SMB,KAIZALA_O365_P2,MYANALYTICS_P2,WHITEBOARD_PLAN1,DYN365_CDS_O365_P1,PROJECT_O365_P1,CDS_O365_P1,POWER_VIRTUAL_AGENTS_O365_P1,VIVA_LEARNING_SEEDED,MICROSOFTBOOKINGS
 Set-MsolUser -UserPrincipalName $upn -UsageLocation "FR"
 Set-MsolUserLicense -UserPrincipalName $upn -AddLicenses "crowerocardfr:O365_BUSINESS_ESSENTIALS" -LicenseOptions $licenseOption
+#resume des infos de l utilisateur
+$infoentra=Get-MgUser -UserId $sam -Select ID, GivenName, Surname, DisplayName, UserPrincipalName, Mail, proxyAddresses, JobTitle, Department, OfficeLocation, AssignedLicenses
+$groups = Get-MgUserMemberOf -UserId $userId | Where-Object { $_ -is [Microsoft.Graph.PowerShell.Models.IMicrosoftGraphGroup] }
+$listegroupes=$groups | ForEach-Object {
+Write-Host "groupes de l utilisateur: $($_.DisplayName)"
 }
+return $infoentra,$listegroupes
+}
+
+
 }
 
 
