@@ -30,24 +30,25 @@
 
 
 # fonction cp_ad_createuser
-
 function cp_rds_cleansession
 {
   <#
 .SYNOPSIS
-Fonction qui permet de forcer sessions RDS, sessions SMB, et de supprimer les profils locaux pas montes sur les serveurs rds
+Fonction qui permet de forcer sessions RDS, sessions SMB, forcer la suppression des processus sur les rds et de supprimer les profils locaux pas montes sur les serveurs rds
 .DESCRIPTION
-Fonction qui permet de forcer sessions RDS, sessions SMB, et de supprimer les profils locaux pas montes sur les serveurs rds
+Fonction qui permet de forcer sessions RDS, sessions SMB, forcer la suppression des processus sur les rds et de supprimer les profils locaux pas montes sur les serveurs rds
 .PARAMETER sam
 sam de la personne
 .PARAMETER serveurprofils
 Serveur ou se trouvent les profils UPD ou FSL
 .PARAMETER $serveurbrokerrds
 Serveur ou se trouve le broker rds
+.PARAMETER $killprocessus
+Commutateur pour forcer la deconnexion des processesus sur les RDS
 .LINK
 https://github.com/jochen1727/
 .NOTES
-possibilite de se connecter a distance avec la commande invoke-command -computer $adresseduserveurad -script {cp_ad_createuser} ou une session a distance avec la commande enter-pssession
+possibilite de se connecter a distance avec la commande invoke-command ou une session a distance avec la commande enter-pssession
 #>
 
 param (
@@ -59,12 +60,27 @@ param (
   [string]$serveurprofils,
   [parameter(mandatory=$true)]
   [string]$serveurbrokerrds,
+  [switch]$killprocessus
 )
-
+# tuer processus rds de l'utilisateur
+if ($killprocessus)
+{
+$ServeursRDS = Get-RDServer -ConnectionBroker $BrokerAdresse
+foreach ($ServeurRDS in $ServeursRDS) {
+     # Récupérer les processus associés à l'utilisateur sur le serveur RDS
+    $ServeursRDS = Get-RDServer -ConnectionBroker $BrokerAdresse
+    $ProcessusUtilisateur = Get-WmiObject -Query "SELECT * FROM Win32_Process WHERE SessionID IN (SELECT SessionID FROM Win32_SessionProcess WHERE UserName='$($Utilisateur)')" -ComputerName $ServeurRDS.ServerName
+    # Terminer chaque processus associé à l'utilisateur sur le serveur RDS
+    foreach ($process in $ProcessusUtilisateur) {
+        Stop-Process -Id $process.ProcessId -Force
+    }
+}
+}
 # fermeture des sessions rds de l'utilisateur
-Get-RDUserSession -ConnectionBroker $serveurbrokerrds | where-object -Property UserName -Like *$sam* | Invoke-RDUserLogoff -HostServer {$_.HostServer} -UnifiedSessionID {$_.unifiedsessionid} -Force
+$sessionrds=Get-RDUserSession -ConnectionBroker $serveurbrokerrds | where-object -Property UserName -Like $sam
+$sessionrds | Invoke-RDUserLogoff -HostServer {$_.HostServer} -UnifiedSessionID {$_.unifiedsessionid} -Force
 # deconnexion des sessions smb de l'utilisateur
-$session=Get-SmbOpenFile -ClientComputerName $serveurprofils | Where-Object -Property ClientUserName -like *$sam*
+$session=Get-SmbOpenFile -ClientComputerName $serveurprofils | Where-Object -Property ClientUserName -like *`\$sam`$
 Close-SmbSession -SessionId $session.SessionId -Force
 Close-SmbOpenFile -ClientUserName *$sam* -Force -ClientComputerName $serveurprofils
 # supprimer les profils et les clefs de registre sur les serveurs rds ainsi que les profils local
