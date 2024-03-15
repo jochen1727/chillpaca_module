@@ -60,10 +60,10 @@ begin
 #installer chocolatey
 if (-not(Test-Path -Path C:\ProgramData\Chocolatey))
 {
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 #suppression des vieux jobs
-Get-Job | where state -ne running | Remove-Job
+Get-Job | Where-Object state -ne running | Remove-Job
 #liste des applications
 $bureautique=@(
 "git"

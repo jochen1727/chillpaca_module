@@ -57,6 +57,8 @@ Get-MailboxPermission -Identity user@domain.com
 Add-RecipientPermission -Identity <boite_aux_lettres> -Trustee <utilisateur> -AccessRights SendAs
 Set-Mailbox -Identity <boite_aux_lettres> -GrantSendOnBehalfTo <utilisateur>
 Remove-MailboxPermission -Identity <boite_aux_lettres> -User <utilisateur> -AccessRights FullAccess
+Get-Mailbox | where -property name -match salle | foreach {Add-MailboxPermission -Identity $_.name -User emorizot@crowe-rocard.fr -AccessRights fullaccess -InheritanceType all}
+Get-Mailbox | where -property name -match salle | foreach {Add-RecipientPermission -Identity $_.name -Trustee fvermi@crowe-rocard.fr -AccessRights sendas -Confirm:$false }
 #licence azure
 #https://learn.microsoft.com/en-us/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide
 $e5Sku = Get-MgSubscribedSku -All | Where SkuPartNumber -eq 'SPE_E5'
