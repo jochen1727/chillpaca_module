@@ -47,7 +47,7 @@ indiquer le samaccountreference de la personne de reference pour copier ses attr
 indiquer le mot de passe de la personne (entre 12 et 20 characteres avec une majuscule, un chiffre et un charactere special '[!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?]`")
 .PARAMETER samaccountreference
 indiquer la societe de la personne pour son adresse email, sont adresse upn
-.PARAMETER identifiantmicrosoftentra
+.PARAMETER creationdossiersmb
 indiquer les identifiants microsoft entra
 .EXAMPLE
 cp_ad_createuser -prenom john -nom doe -motdepasse azertyAZERTY_ -societe masociete -$identifiantmicrosoftentra
@@ -71,9 +71,8 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
     [string]$motdepasse,
     [parameter(mandatory = $true)]
     [ValidateSet("lprh", "equinoxe", "rocard")]
-    [string]$societe
-    #[parameter(mandatory=$true)]
-    #[PSCredential]$identifiantmicrosoftentra
+    [string]$societe,
+    [switch]$creationdossiersmb
   )
   begin {
     #installations et importations modules si besoins
@@ -170,8 +169,10 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
     $utilisateur = Get-ADUser -Identity $sam
     $utilisateur | move-ADObject -TargetPath $OU
     #ceation dossier utilisateur SCAN
-    $dossier_utilisateur = $prenom.toupper().Substring(0, 1) + $nom.toupper().Substring(0, 2)
-    Invoke-Command -ComputerName srv-fs01 -ScriptBlock { new-item "D:\Rocard\Commun\Scan\Individuel\dossier_utilisateur" -Type directory }
+    if ($creationdossiersmb) {
+      $dossier_utilisateur = $prenom.toupper().Substring(0, 1) + $nom.toupper().Substring(0, 2)
+      Invoke-Command -ComputerName srv-fs01 -ScriptBlock { new-item "D:\Rocard\Commun\Scan\Individuel\dossier_utilisateur" -Type directory }
+    }
   }
   end {
     #Forcer synchro AD connect
