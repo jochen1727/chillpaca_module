@@ -34,9 +34,9 @@
 function cp_365_createuser {
     <#
   .SYNOPSIS
-  Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une licence 365 microsoft
+  Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une licence 365 microsoft depuis un fichier csv
   .DESCRIPTION
-  Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une licence 365 microsoft
+Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une licence 365 microsoft depuis un fichier csv
   .PARAMETER cheminfichiercsv
   Emplacement du fichier csv avec les parametres pour la creation de l utilisateur
   .EXAMPLE
