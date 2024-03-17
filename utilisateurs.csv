@@ -1,2 +1,2 @@
-DisplayName,MailNickName,Mail ,UserPrincipalName ,Department ,JobTitle ,Mobile ,Country ,EmployeeId ,Groupes,Password 
-Test test,test@test.test,,,,,,,,,
+GivenName,Surname,DisplayName,UserPrincipalName ,Mail ,MailNickName ,Department ,JobTitle,Mobile ,Country ,Password ,Groupes
+John,Doe,John Doe,john.doe@domain.local,john.doe@domain.local,john.doe@domain.local,IT,admin,,france,Azerty123456!,

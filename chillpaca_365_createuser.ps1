@@ -37,10 +37,14 @@ function cp_365_createuser {
   Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une licence 365 microsoft
   .DESCRIPTION
   Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une licence 365 microsoft
+  .PARAMETER cheminfichiercsv
+  Emplacement du fichier csv avec les parametres pour la creation de l utilisateur
   .EXAMPLE
+  cp_365_createuser -cheminfichiercsv chemin du fichier au format csv
   .LINK
   https://github.com/jochen1727/
   .NOTES
+  Il faut avoir les droits suivants sur MSGPRAPH dans 365 :"User.ReadWrite.All", "Group.ReadWrite.All", "Directory.ReadWrite.All" 
   #>
     param (
         [parameter(mandatory = $true)]
@@ -48,11 +52,10 @@ function cp_365_createuser {
     )
 
     begin {
-        # Installation du module Microsoft Graph API si besoin.
-        Install-Module Microsoft.Graph
-
-        # Connexion au portail Microsoft et Azure. 
-        Connect-MgGraph -Scope "User.Read.All", "Group.Read.All", "Directory.ReadWrite.All"
+        # Installation du module Microsoft Graph API si besoin et importation.
+        Install-Module -name Microsoft.Graph
+        # Connexion mggraph. 
+        Connect-MgGraph -Scope "User.ReadWrite.All", "Group.ReadWrite.All", "Directory.ReadWrite.All"
         $utilisateurs = Import-CSV -Path $cheminfichiercsv -Delimiter ","
     }
     process {
@@ -71,6 +74,8 @@ function cp_365_createuser {
                     }
         
                     $utilisateurParams = @{
+                        GivenName         = $utilisateur.GivenName
+                        Surname           = $utilisateur.Surname
                         DisplayName       = $utilisateur.DisplayName
                         MailNickName      = $utilisateur.MailNickName
                         Mail              = $utilisateur.Mail
@@ -79,7 +84,6 @@ function cp_365_createuser {
                         JobTitle          = $utilisateur.JobTitle
                         Mobile            = $utilisateur.Mobile
                         Country           = $utilisateur.Country
-                        EmployeeId        = $utilisateur.EmployeeId
                         AccountEnabled    = $true
                         Password          = $PasswordProfile
                     }
@@ -101,23 +105,10 @@ function cp_365_createuser {
                         }
                     }
                     #Attribution de la licence 365
-
                     $usageLocation = 'FR'
-
-    update-mguser -UserId $upn -usagelocation $usageLocation
-    Set-MgUserLicense -UserId (Get-MgUser -UserId $user.UserPrincipalName).Id -Addlicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870’ } -RemoveLicenses @()
-    #resume des infos de l utilisateur
-    line
-    Write-Host "-----------------------------------------resume utilisateur-----------------------------------------------------"
-    Get-MgUser -UserId $user.UserPrincipalName | Select ID, GivenName, Surname, DisplayName, UserPrincipalName, Mail, proxyAddresses, JobTitle, Department, OfficeLocation, AssignedLicenses
-    Write-Host "-----------------------------------------groupes de l utilisateur-----------------------------------------------"
-    Get-MgUserTransitiveMemberOf -UserId $user.UserPrincipalName -Property displayName | ? { $_.AdditionalProperties.'@odata.type' -eq "#microsoft.graph.group" } | select @{n = "Name"; e = { $_.AdditionalProperties.displayName } } 
-    Get-MgUserOwnedObject -UserId $user.UserPrincipalName -Property id, displayName | select @{n = "Name"; e = { $_.AdditionalProperties.displayName } }
-    Write-Host "----------------------------------licences Microsoft 365 de l utilisateur---------------------------------------"
-    Get-MgUserLicenseDetail -UserId $user.UserPrincipalNamepn | select SkuPartNumber, ServicePlans | ft -AutoSize
-    line
-    Write-Host "----------------------------------licences Microsoft 365 utilisees----------------------------------------------"
-    Get-MgSubscribedSku
+                    update-mguser -UserId $upn -usagelocation $usageLocation
+                    Set-MgUserLicense -UserId (Get-MgUser -UserId $user.UserPrincipalName).Id -Addlicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870’ } -RemoveLicenses @()
+                    
                 }
                 Catch {
                     # Sinon on affice le message d'erreur.
@@ -131,7 +122,21 @@ function cp_365_createuser {
            
     }
     
-    end {}
+    end {
+
+        #resume des infos de l utilisateur
+        line
+        Write-Host "-----------------------------------------resume utilisateur-----------------------------------------------------"
+        Get-MgUser -UserId $user.UserPrincipalName | select-object ID, GivenName, Surname, DisplayName, UserPrincipalName, Mail, proxyAddresses, JobTitle, Department, OfficeLocation, AssignedLicenses
+        Write-Host "-----------------------------------------groupes de l utilisateur-----------------------------------------------"
+        Get-MgUserTransitiveMemberOf -UserId $user.UserPrincipalName -Property displayName | ? { $_.AdditionalProperties.'@odata.type' -eq "#microsoft.graph.group" } | select-object @{n = "Name"; e = { $_.AdditionalProperties.displayName } } 
+        Get-MgUserOwnedObject -UserId $user.UserPrincipalName -Property id, displayName | select-object @{n = "Name"; e = { $_.AdditionalProperties.displayName } }
+        Write-Host "----------------------------------licences Microsoft 365 de l utilisateur---------------------------------------"
+        Get-MgUserLicenseDetail -UserId $user.UserPrincipalNamepn | select-object SkuPartNumber, ServicePlans | ft -AutoSize
+        line
+        Write-Host "----------------------------------licences Microsoft 365 utilisees----------------------------------------------"
+        Get-MgSubscribedSku
+    }
 }
 
 
