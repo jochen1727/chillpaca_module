@@ -1,51 +1,5 @@
-<#                                                                                              
-      ⡾⣦⡀⠀⠀⡀⠀⣰⢷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-  ⠀⣠⠗⠛⠽⠛⠋⠉⢳⡃⢨⢧⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⣰⠋⠁⠀⠀⠀   ⠀⠙⠛⢾⡈⡏⢧⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                   
-⣼⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠘⢧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠸⢦⡀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⢈⠟⠓⠶⠞⠒⢻⣿⡏⢳⡀⠀⠀⠀⠀⢸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⡴⢉⠀⠀⠀⠀⠀⠈⠛⢁⣸⠇⠀⠀⠀⠀⢺⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⢧⣸⡁⠀⠀⣀⠀⠀⣠⠾⠀⠀⠀⠀⠀⠀⣹⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠉⠓⢲⠾⣍⣀⣀⡿⠃⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢀⡗⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⣸⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠺⠦⠤⠤⣤⣄⣀⣀⡀⠀⠀⠀⠀⠀
-⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠳⣦⣄⠀⠀
-⠀⠀⢀⡷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣆⠀
-⠀⠀⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣆
-⠀⠀⣏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿
-⠀⠀⢹⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼
-⠀⠀⠀⣏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡞
-⠀⠀⠀⠈⢷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡇
-⠀⠀⠀⠀⠈⢻⣦⣀⠀⣏⠀⠀⠀⠀⠀⠀⢸⡆⠀⠀⢠⡄⠀⠀⠀⠀⠀⢀⡿⠀
-⠀⠀⠀⠀⠀⠀⠻⡉⠙⢻⡆⠀⠀⠀⠀⠀⡾⠚⠓⣖⠛⣧⡀⠀⠀⠀⢀⡾⠁⠀
-⠀⠀⠀⠀⠀⠀⠀⠙⡇⢀⡿⣦⡀⠀⢀⡴⠃⠀⠀⠈⣷⢈⠷⡆⠀⣴⠛⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠛⠚⠀⢸⡇⣰⠏⠁⠀⠀⠀⠀⢉⠁⢸⠷⠼⠃⠀
-
-#>
-#####################################################################################################script creation utilisateur 365#################################################################################################################################
-
-
 # fonction cp_365_createuser
-
 function cp_365_createuser {
-    <#
-  .SYNOPSIS
-  Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une licence 365 microsoft depuis un fichier csv
-  .DESCRIPTION
-Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une licence 365 microsoft depuis un fichier csv
-  .PARAMETER cheminfichiercsv
-  Emplacement du fichier csv avec les parametres pour la creation de l utilisateur
-  .EXAMPLE
-  cp_365_createuser -cheminfichiercsv chemin du fichier au format csv
-  .LINK
-  https://github.com/jochen1727/
-  .NOTES
-  Il faut avoir les droits suivants sur MSGPRAPH dans 365 :"User.ReadWrite.All", "Group.ReadWrite.All", "Directory.ReadWrite.All" 
-  #>
     param (
         [parameter(mandatory = $true)]
         [string]$cheminfichiercsv
@@ -53,26 +7,52 @@ Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une li
 
     begin {
         # Installation du module Microsoft Graph API si besoin et importation.
-        Install-Module -name Microsoft.Graph
-        # Connexion mggraph. 
-        Connect-MgGraph -Scope "User.ReadWrite.All", "Group.ReadWrite.All", "Directory.ReadWrite.All"
+        Install-Module -Name Microsoft.Graph
+
+        # Connexion mggraph.
+        $ClientId = "9e622d1a-2ab0-410e-888e-fac34de0d1ad"
+        $TenantId = "c176a1c4-c9c2-405f-9f76-ab88af47ddc6"
+        $ClientSecret = "qB08Q~0X~bCDKONSelteoW0W7UxFmLmpE4w8HaZL"
+        $Body = @{
+            Grant_Type    = "client_credentials"
+            Scope         = "https://graph.microsoft.com/.default"
+            Client_Id     = $ClientId
+            Client_Secret = $ClientSecret
+        }
+
+        # Récupérer le jeton d'accès
+        $Connection = Invoke-RestMethod -Uri "https://login.microsoftonline.com/$TenantId/oauth2/v2.0/token" -Method POST -Body $Body
+
+        # Récupérer le jeton d'accès
+        $token = $Connection.access_token
+
+        # Convertir le jeton d'accès en SecureString
+        $SecureToken = ConvertTo-SecureString $token -AsPlainText -Force
+
+        # Se connecter à Microsoft Graph en utilisant le jeton d'accès sécurisé
+        Connect-MgGraph -AccessToken $SecureToken
+
+        # Importer les utilisateurs depuis le fichier CSV
         $utilisateurs = Import-CSV -Path $cheminfichiercsv -Delimiter ","
     }
+
     process {
-        Foreach ($utilisateur in $utilisateurs) {
-            If ($null -ne (Get-MgUser -UserId $utilisateur.UserPrincipalName -ErrorAction SilentlyContinue)) {
-                Write-Host "$($utilisateur.UserPrincipalName) - Existe dans Azure AD"
-            }
-            Else {
-                Try {
+        foreach ($utilisateur in $utilisateurs) {
+            Try {
+                # Vérifier si l'utilisateur existe dans Azure AD
+                $user = Get-MgUser -UserId $utilisateur.UserPrincipalName -ErrorAction SilentlyContinue
+                if ($null -ne $user) {
+                    Write-Host "$($utilisateur.UserPrincipalName) - Existe dans Azure AD"
+                }
+                Else {
                     Write-Host "$($utilisateur.UserPrincipalName) - Création du compte dans Azure AD"
-    
+
                     $PasswordProfile = @{
                         Password                             = $utilisateur.Password
                         ForceChangePasswordNextSignIn        = $true
                         ForceChangePasswordNextSignInWithMfa = $true
                     }
-        
+
                     $utilisateurParams = @{
                         GivenName         = $utilisateur.GivenName
                         Surname           = $utilisateur.Surname
@@ -80,64 +60,40 @@ Fonction de creation d'un utilisateur dans le tenant 365 et attribution d'une li
                         MailNickName      = $utilisateur.MailNickName
                         Mail              = $utilisateur.Mail
                         UserPrincipalName = $utilisateur.UserPrincipalName
-                        Department        = $utilisateur.Department
+                        Department        = $utilisateur.Service
                         JobTitle          = $utilisateur.JobTitle
-                        Mobile            = $utilisateur.Mobile
+                        #  MobilePhone       = $utilisateur.MobilePhone
                         Country           = $utilisateur.Country
                         AccountEnabled    = $true
-                        Password          = $PasswordProfile
+                        PasswordProfile   = $PasswordProfile
                     }
-          
-        
-                    #creation de l utilisateur.
-                    New-MgUser @UserParams -ErrorAction Stop
+                    # Création de l'utilisateur
+                    New-MgUser @utilisateurParams -ErrorAction stop
 
-                    #creation des groupes.
-                    $groupes = $utilisateur.Groupes -split ','
-                    $user = Get-MgUser -Filter "userPrincipalName eq '$utilisateur.UserPrincipalName'"
+                    # Création du groupe
+                    $groupes = $utilisateur.Groupes -split ';'
+            
                     foreach ($groupe in $groupes) {
-                        $groupedata = Get-MgGroup -Filter "displayName eq '$groupe'"
-                        if ($groupedata -ne $null) {
-                            Add-MgGroupMember -GroupId $groupedata.Id -UserId $user.Id
-                        }
-                        else {
-                            Write-Host "Impossible de trouver le groupe $($groupName)."
-                        }
+                        $Groupid = (Get-MgGroup | Where-Object { $_.DisplayName -eq "$($groupe)" }).id
+                        $odadaID = "https://graph.microsoft.com/v1.0/users/" + [System.Uri]::EscapeDataString($utilisateur.UserPrincipalName)
+                        New-MgGroupMemberByRef -GroupId $GroupId -OdataId $odadaID -erroraction SilentlyContinue
                     }
-                    #Attribution de la licence 365
-                    $usageLocation = 'FR'
-                    update-mguser -UserId $upn -usagelocation $usageLocation
-                    Set-MgUserLicense -UserId (Get-MgUser -UserId $user.UserPrincipalName).Id -Addlicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870’ } -RemoveLicenses @()
-                    
-                }
-                Catch {
-                    # Sinon on affice le message d'erreur.
-                    write-warning "Une erreur est survenue" 
-                    write-host $_.Exception.Message 
-                }
-       
-            }
-             
-        }
            
-    }
-    
-    end {
-
-        #resume des infos de l utilisateur
-        line
-        Write-Host "-----------------------------------------resume utilisateur-----------------------------------------------------"
-        Get-MgUser -UserId $user.UserPrincipalName | select-object ID, GivenName, Surname, DisplayName, UserPrincipalName, Mail, proxyAddresses, JobTitle, Department, OfficeLocation, AssignedLicenses
-        Write-Host "-----------------------------------------groupes de l utilisateur-----------------------------------------------"
-        Get-MgUserTransitiveMemberOf -UserId $user.UserPrincipalName -Property displayName | ? { $_.AdditionalProperties.'@odata.type' -eq "#microsoft.graph.group" } | select-object @{n = "Name"; e = { $_.AdditionalProperties.displayName } } 
-        Get-MgUserOwnedObject -UserId $user.UserPrincipalName -Property id, displayName | select-object @{n = "Name"; e = { $_.AdditionalProperties.displayName } }
-        Write-Host "----------------------------------licences Microsoft 365 de l utilisateur---------------------------------------"
-        Get-MgUserLicenseDetail -UserId $user.UserPrincipalNamepn | select-object SkuPartNumber, ServicePlans | ft -AutoSize
-        line
-        Write-Host "----------------------------------licences Microsoft 365 utilisees----------------------------------------------"
-        Get-MgSubscribedSku
+                    # Affichage des infos utilisateurs
+                    Get-MgUser -UserId $utilisateur.UserPrincipalName | select-object -Property GivenName, Surname, DisplayName, MailNickName, Mail, UserPrincipalName, Department, JobTitle, Country, AccountEnabled
+                
+                    # Attribution de la licence 365
+                    #       $usageLocation = 'FR'
+                    #         update-mguser -UserId $newUser.UserPrincipalName -usagelocation $usageLocation
+                    #         Set-MgUserLicense -UserId $newUser.Id -AddLicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870' } -RemoveLicenses @()
+                }
+            }
+            Catch {
+                # Afficher un avertissement en cas d'erreur
+                Write-Warning "Une erreur est survenue lors de la création de l'utilisateur $($utilisateur.UserPrincipalName)"
+                Write-Host $_.Exception.Message 
+            }
+        }
     }
 }
-
-
 

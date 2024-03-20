@@ -1,2 +1,3 @@
-GivenName,Surname,DisplayName,UserPrincipalName ,Mail ,MailNickName ,Department ,JobTitle,Mobile ,Country ,Password ,Groupes
-John,Doe,John Doe,john.doe@domain.local,john.doe@domain.local,john.doe@domain.local,IT,admin,,france,Azerty123456!,
+GivenName,Surname,DisplayName,UserPrincipalName,Mail,MailNickName,Department,JobTitle,MobilePhone,Country,Password,Groupes,
+John,Doe,John Doe,john.doe@chillpaca.onmicrosoft.com,john.doe@chillpaca.onmicrosoft.com,john.doenick,IT,admin,,france,Azerty123456!,test;test2,
+John2,Doe2,John Doe2,john.doe2@chillpaca.onmicrosoft.com,john.doe2@chillpaca.onmicrosoft.com,john.doe2nick,IT,admin,,france,Azerty123456!,test;test2,
