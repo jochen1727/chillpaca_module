@@ -8,11 +8,11 @@ function cp_365_createuser {
     begin {
         # Installation du module Microsoft Graph API si besoin et importation.
         Install-Module -Name Microsoft.Graph
-
+        install-module -name Microsoft.Graph.Beta.Users
         # Connexion mggraph.
         $ClientId = "9e622d1a-2ab0-410e-888e-fac34de0d1ad"
         $TenantId = "c176a1c4-c9c2-405f-9f76-ab88af47ddc6"
-        $ClientSecret = "qB08Q~0X~bCDKONSelteoW0W7UxFmLmpE4w8HaZL"
+        $ClientSecret = "JXO8Q~TSoamLEs~M70792lh6Uw4HbhjeedV7bcOE"
         $Body = @{
             Grant_Type    = "client_credentials"
             Scope         = "https://graph.microsoft.com/.default"
@@ -34,6 +34,8 @@ function cp_365_createuser {
 
         # Importer les utilisateurs depuis le fichier CSV
         $utilisateurs = Import-CSV -Path $cheminfichiercsv -Delimiter ","
+
+        $listeutilisateurs = @()
     }
 
     process {
@@ -60,7 +62,7 @@ function cp_365_createuser {
                         MailNickName      = $utilisateur.MailNickName
                         Mail              = $utilisateur.Mail
                         UserPrincipalName = $utilisateur.UserPrincipalName
-                        Department        = $utilisateur.Service
+                        Department        = $utilisateur.Department
                         JobTitle          = $utilisateur.JobTitle
                         #  MobilePhone       = $utilisateur.MobilePhone
                         Country           = $utilisateur.Country
@@ -68,7 +70,7 @@ function cp_365_createuser {
                         PasswordProfile   = $PasswordProfile
                     }
                     # Création de l'utilisateur
-                    New-MgUser @utilisateurParams -ErrorAction stop
+                    New-MgUser @utilisateurParams -ErrorAction SilentlyContinue
 
                     # Création du groupe
                     $groupes = $utilisateur.Groupes -split ';'
@@ -78,14 +80,15 @@ function cp_365_createuser {
                         $odadaID = "https://graph.microsoft.com/v1.0/users/" + [System.Uri]::EscapeDataString($utilisateur.UserPrincipalName)
                         New-MgGroupMemberByRef -GroupId $GroupId -OdataId $odadaID -erroraction SilentlyContinue
                     }
-           
-                    # Affichage des infos utilisateurs
-                    Get-MgUser -UserId $utilisateur.UserPrincipalName | select-object -Property GivenName, Surname, DisplayName, MailNickName, Mail, UserPrincipalName, Department, JobTitle, Country, AccountEnabled
-                
+                                      # Affichage des infos utilisateurs
+                  
+                    $listeutilisateurs += Get-MgBetaUser -UserId $utilisateur.UserPrincipalName | select-object -Property GivenName, Surname, DisplayName, MailNickName, Mail, UserPrincipalName, Department, JobTitle, Country, AccountEnabled,@{Name='Groupes'; Expression={"$($listeNomsMembres)"}}
+                  
+                  
                     # Attribution de la licence 365
                     #       $usageLocation = 'FR'
-                    #         update-mguser -UserId $newUser.UserPrincipalName -usagelocation $usageLocation
-                    #         Set-MgUserLicense -UserId $newUser.Id -AddLicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870' } -RemoveLicenses @()
+                    #         update-mguser -UserId $utilisateur.UserPrincipalName -usagelocation $usageLocation
+                    #         Set-MgUserLicense -UserId $utilisateur.Id -AddLicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870' } -RemoveLicenses @()
                 }
             }
             Catch {
@@ -94,6 +97,9 @@ function cp_365_createuser {
                 Write-Host $_.Exception.Message 
             }
         }
+    }
+    end {
+        $listeutilisateurs | Format-Table
     }
 }
 
