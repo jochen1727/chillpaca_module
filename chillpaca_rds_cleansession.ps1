@@ -84,7 +84,7 @@ $session=Get-SmbOpenFile -ClientComputerName $serveurprofils | Where-Object -Pro
 Close-SmbSession -SessionId $session.SessionId -Force
 Close-SmbOpenFile -ClientUserName *$sam* -Force -ClientComputerName $serveurprofils
 # supprimer les profils et les clefs de registre sur les serveurs rds ainsi que les profils local
-$serveursrds=Get-RDSessionHost -ConnectionBroker $serveurbrokerrds
+$serveursrds=Get-RDSessionHost -ConnectionBroker $serveurbrokerrds -collectionname "G.R. Appli"
 foreach ($server in $serveursrds)
 {
 Invoke-Command -ComputerName $server -ScriptBlock {
