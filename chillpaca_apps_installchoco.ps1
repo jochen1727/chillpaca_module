@@ -81,7 +81,6 @@ $bureautique=@(
 "oh-my-posh"
 "7zip"
 "sumatrapdf"
-"libreoffice-fresh"
 "onenote"
 "tor-browser"
 )

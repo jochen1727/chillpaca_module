@@ -63,3 +63,23 @@ Get-Mailbox | where -property name -match salle | foreach {Add-RecipientPermissi
 #https://learn.microsoft.com/en-us/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide
 $e5Sku = Get-MgSubscribedSku -All | Where SkuPartNumber -eq 'SPE_E5'
 Set-MgUserLicense -UserId $upn -AddLicenses @{SkuId = $e5Sku.SkuId} -RemoveLicenses @()
+#################################################################################################controleur de domaine###################################################################################################################################################
+#voir soucis replication
+Get-ADReplicationFailure –Scope DOMAIN –Target mondomaine
+#infos pour les replications dc
+Get-ADReplicationPartnerMetadata -Target dc
+Get-ADReplicationPartnerMetadata –Target * -Scope Server | Where {$_.LastReplicationResult –ne "0"} | Format-Table Server, LastReplicationAttempt, LastReplicationResult, Partner, Site
+Get-ADReplicationQueueOperation -Server dc
+Get-ADReplicationAttributeMetadata -Object "DC=test,DC=local" -Server dc -ShowAllLinkedValues
+#infos pour les replications sites
+Get-ADReplicationSite -Filter *
+Get-ADReplicationSiteLink -Filter *
+Get-ADReplicationSiteLinkBridge -Filter *
+Get-ADReplicationSubnet -Filter *	
+#repliquer objet
+Sync-ADObject -Object 'DC=Domain,DC=local' -Source dc
+#repliquer dc tous les sites
+repadmin /syncall /Aped
+repadmin /showrepl
+repadmin /replsum
+
