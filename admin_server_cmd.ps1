@@ -43,9 +43,12 @@ Get-ChildItem -Recurse -File | where-object-Object { $_.Length -gt 100MB } | Sel
 Get-ChildItem -Path c:\ -Depth 2  | Measure-Object -Property Length -Sum | Select-Object @{Name="Size";Expression={"{0:N2} {1}" -f ($_.Sum / 1GB), "GB"}}
 # recherche un type de fichier
 ls -Path "C:\" -Recurse -file -Exclude "C:\Users","C:\Windows" -ErrorAction SilentlyContinue | where {$_.Name -match "\.dmp"} | rm -force
+# taille disque
+Get-PSDrive C -PSProvider FileSystem | Select-Object Name, @{Name="Taille totale (Go)";Expression={[math]::Round($_.Used + $_.Free) / 1GB}}, @{Name="Espace utilisé (Go)";Expression={[math]::Round($_.Used / 1GB)}}, @{Name="Espace libre (Go)";Expression={[math]::Round($_.Free / 1GB)}}
 ################################################################################################ Microsoft 365######################################################################################################################################################
 # gerer microsoft 365 avec microsoft graph
 Install-Module Microsoft.Graph -Scope "User.ReadWrite.All", "Group.ReadWrite.All", "Directory.ReadWrite.All" -AllowClobber -Force 
+install-module -name Microsoft.Graph.Beta.Users
 connect-mggraph
 Disconnect-MgGraph
 #connecter a exchange 365
@@ -66,6 +69,9 @@ Set-Mailbox -Identity <boite_aux_lettres> -GrantSendOnBehalfTo <utilisateur>
 Get-Mailbox | where-object -property name -match salle | foreach-object {Set-Mailbox -Identity <boite_aux_lettres> -GrantSendOnBehalfTo <utilisateur> -confirm:$false }
 #cache une BAL de la GAL
 Set-Mailbox "nom_boite_aux_lettres" -HiddenFromAddressListsEnabled $true
+#activer l envoi depuis un alias
+Set-OrganizationConfig -SendFromAliasEnabled $True
+
 
 #licence azure
 #https://learn.microsoft.com/en-us/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide

@@ -26,173 +26,130 @@
 ⠀⠀⠀⠀⠀⠀⠀⠀⠛⠚⠀⢸⡇⣰⠏⠁⠀⠀⠀⠀⢉⠁⢸⠷⠼⠃⠀
 
 #>
-#########################################################################################################script creation utilisateur#################################################################################################################################
-
-
-# fonction cp_ad_createuser
-
-function cp_ad_createuser {
-  <#
+#########################################################################################################chillpaca_ad_createuser#################################################################################################################################
+<#
 .SYNOPSIS
 Fonction de creation d'un utilisateur dans l'ad et attribution d'une licence 365 microsoft
 .DESCRIPTION
-Fonction de creation d'un utilisateur dans l'ad et attribution d'une licence 365 microsoft en copiant un utilisateur existant a partir de son samaccount, neccessite d'avoir des droits administrateurs du domaine et de se connecter sur le controleur de domaine.
-.PARAMETER prenom
-indiquer le prenom de la personne a creer 
-.PARAMETER nom
-indiquer le nom de la personne a creer 
-.PARAMETER samaccountreference
-indiquer le samaccountreference de la personne de reference pour copier ses attributs
-.PARAMETER motdepasse
-indiquer le mot de passe de la personne (entre 12 et 20 characteres avec une majuscule, un chiffre et un charactere special '[!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?]`")
-.PARAMETER samaccountreference
-indiquer la societe de la personne pour son adresse email, sont adresse upn
-.PARAMETER creationdossiersmb
-indiquer les identifiants microsoft entra
+Fonction de creation d'un utilisateur dans l'ad et attribution d'une licence 365 microsoft à partir de caracteristiques dans un fichier csv.
+.PARAMETER cheminfichiercsv
+emplacement du fichier avec les informations.
+.PARAMETER activerlicence365
+Active ou non l'attribution de la licence microsoft365 pour l'utilisateur (parametre non obligatoire)
 .EXAMPLE
-cp_ad_createuser -prenom john -nom doe -motdepasse azertyAZERTY_ -societe masociete -$identifiantmicrosoftentra
+cp_ad_createuser -cheminfichiercsv "emplacement du fichier csv" -activerlicence365
 .LINK
 https://github.com/jochen1727/
 .NOTES
 possibilite de se connecter a distance avec la commande invoke-command -computer $adresseduserveurad -script {cp_ad_createuser} ou une session a distance avec la commande enter-pssession
+il faut au prealable indiquer les elements $ClientId  $TenantId  $ClientSecret configure dans le tenant 365
 #>
-  param (
-    [parameter(mandatory = $true)]
-    [string]$prenom,
-    [parameter(mandatory = $true)]
-    [string]$nom,
-    [parameter(mandatory = $true)]
-    [ValidateNotNullOrEmpty()]
-    [Validatelength(3, 20)]
-    [string]$samaccountreference,
-    [parameter(mandatory = $true)]
-    [Validatelength(12, 20)]
-    [ValidateScript({ ($_ -match "[A-Z]") -and ($_ -match "[0-9]") -and ($_ -match "[!@#$%^&*()_+\-=\[\]{};:'\\|,.<>\/?]" ) })]
-    [string]$motdepasse,
-    [parameter(mandatory = $true)]
-    [ValidateSet("lprh", "equinoxe", "rocard")]
-    [string]$societe,
-    [switch]$creationdossiersmb
-  )
-  begin {
-    #installations et importations modules si besoins
-    Add-WindowsFeature -Name "RSAT-AD-PowerShell" -IncludeAllSubFeature
+function cp_ad_createuser {
+    param (
+        [parameter(mandatory = $true)]
+        [string]$cheminfichiercsv,
+        [switch]$activerlicence365
+    )
+    #verification modules AD et MSgraph ok
+    if (-not (Get-Module -ListAvailable -Name ActiveDirectory)) {
+        Install-Module -Name ActiveDirectory -Scope CurrentUser
+    }
     Import-Module ActiveDirectory
-    $modules = @("azuread", "msonline", "Microsoft.Graph")
-    foreach ($module in $modules) {
-      if (-not (Get-Module -Name $module -ListAvailable)) {
-        Install-Module -Name $module -Force -AllowClobber
-      }
-      Import-Module $module
-    }
-    #fonction affichage lignes 
-    function line {
-      return (
-        write-output "
-----------------------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------------------------------
-"
-      )
-    }  
-    #fonction supprimer caracteres latin                                                                                                                                                                              
-    function removestringlatincharacters {
-      param (
-        [string]$String
-      )
-      $bytes = [Text.Encoding]::GetEncoding("Cyrillic").GetBytes($String)
-      [Text.Encoding]::ASCII.GetString($bytes)
-    }
-    #prenom et nom au bon format
-    $prenom = RemoveStringLatinCharacters($prenom).ToLower()
-    $nom = RemoveStringLatinCharacters($nom).ToLower()
-    #Adresse email de la personne selon sa societe
-    switch ($societe) {
-      "lprh" {
-        $societedns = "lepolerh.com"
-      }
-      "equinoxe" {
-        $societedns = "equinoxe-expert.com"
-      }
-      "rocard" {
-        $societedns = "crowe-rocard.fr"
-      }
-    }
-    $email = $prenom + "." + $nom + "@" + $societedns
-    $prenom = removestringlatincharacters($prenom)
-    #nom complet de la personne avec la premiere lettre du prenom en majuscule et le nom en majuscule
-    $fullname = $prenom.substring(0, 1).toupper() + $prenom.substring(1).tolower() + " " + $nom.ToUpper()
-    #sam utilisateur et vÃ©rification utilisateur prÃ©sent ou pas 
-    $sam = .{
-      $index = 0
-      $x = ($prenom.toLower())[$index] + $nom.tolower()
-      do {
-        $usernameExists = try { $null = get-aduser $x; $true }catch { $false }
-        if ($usernameExists) {
-          $index += 1
-          $x = (($prenom.toLower())[0..$index] -join '') + $nom.tolower()
+    #importation des utilisateurs depuis le fichier CSV
+    $utilisateurs = Import-CSV -Path $cheminfichiercsv -Delimiter ';'
+    #creation de l utilisateur
+    foreach ($utilisateur in $utilisateurs) {
+        # Formatage du SamAccountName : première lettre du prénom + nom, limité à 20 caractères
+        $samAccountName = $utilisateur.prenom.Substring(0, 1) + $utilisateur.nom
+        $proxyAddresses = "SMTP:" + $utilisateur.addresseemail
+        # Tentative de création d'un nouvel utilisateur AD
+        try {
+            New-ADUser -SamAccountName $samAccountName `
+                -UserPrincipalName $utilisateur.upn `
+                -Name ("{0} {1}" -f $utilisateur.prenom, $utilisateur.nom) `
+                -GivenName $utilisateur.prenom `
+                -Surname $utilisateur.nom `
+                -Enabled $true `
+                -DisplayName ("{0} {1}" -f $utilisateur.prenom, $utilisateur.nom) `
+                -Email $utilisateur.adresseprincipale `
+                -AccountPassword (ConvertTo-SecureString $utilisateur.password -AsPlainText -Force) `
+                -Path $utilisateur.cheminou `
+                -PasswordNeverExpires $true `
+                -CannotChangePassword $false `
+                -ErrorAction Stop `
+                -Department $utilisateur.departement `
+                -Title $utilisateur.poste `
+                -Company $utilisateur.entreprise
+
+            #ajout de l adresse principale et les adresses secondaires
+            $adresseprincipale = "SMTP:" + $utilisateur.adresseprincipale
+            $adressessecondaires = $utilisateur.adressessecondaires -split ',' | ForEach-Object { "smtp:" + $_ }
+            $proxyAddresses = @($adresseprincipale) + $adressessecondaires
+            try {
+                Set-ADUser -Identity $samAccountName -Add @{ proxyAddresses = $proxyAddresses }
+            }
+            catch {
+                Write-Error "Erreur lors de la mise à jour du parametre proxyadresses de $($utilisateur.SamAccountName): $_"
+            }    
+            #ajout de groupes
+            $groupes = $utilisateur.Groupes -split ','
+            foreach ($groupe in $groupes) {
+                try {
+                    Add-ADGroupMember -Identity $groupe -Members $samAccountName
+                    Write-Host "Utilisateur $($samAccountName) ajouté au groupe $groupe."
+                }
+                catch {
+                    Write-Warning "Impossible d'ajouter l'utilisateur $($samAccountName) au groupe $groupe : $_"
+                }
+            }
+            #informations utilisateurs
+            $infos = @()
+            $infos += Get-ADUser -Filter "SamAccountName -eq `"$samAccountName`"" -Properties * | Select-Object enabled, objectSid, GivenName, Surname, DisplayName, UserPrincipalName, Mail, proxyAddresses, Title, Department, OfficeLocation, AssignedLicenses, DistinguishedName, @{name = "groupes"; Expression = { (Get-ADPrincipalGroupMembership -Identity $samAccountName | Select-Object -ExpandProperty Name) -join ', ' } }
         }
-        else {
-          return $x
+        catch {
+            Write-Warning "Impossible de créer l'utilisateur $($utilisateur.prenom) $($utilisateur.nom): $_"
         }
-      }until(!$usernameExists -or $prenom.length + $nom.length -eq $x.length)
-      $number = 1
-      $x = ($prenom.toLower())[$index] + $nom.tolower()
-      do {
-        $y = $x + "$number"
-        $usernameExists = try { $null = get-aduser $y; $true }catch { $false }
-        if ($usernameExists) {
-          $number += 1
-          $y = $x + "$number"
+        
+        $infos | Format-List
+        
+    }
+   
+    if ($activerlicence365) {
+        Write-Host "attente de 20 minutes le temps de la synchro AD / entra ID pour attribuer les licences 365"
+        Start-ADSyncSyncCycle -PolicyType initial
+        Start-Sleep -Seconds 1200
+ 
+        # Connexion mggraph.
+        $ClientId = "9e622d1a-2ab0-410e-888e-fac34de0d1ad"
+        $TenantId = "c176a1c4-c9c2-405f-9f76-ab88af47ddc6"
+        $ClientSecret = "JXO8Q~TSoamLEs~M70792lh6Uw4HbhjeedV7bcOE"
+        $Body = @{
+            Grant_Type    = "client_credentials"
+            Scope         = "https://graph.microsoft.com/.default"
+            Client_Id     = $ClientId
+            Client_Secret = $ClientSecret
         }
-        else {
-          return $y
-        }      
-      }until($number -ge 10000)
-      return $null
-    }
-    if (!$sam) {
-      write-warning "Utilisateur deja utilise."
-      return $false
-    }
-    #UPN utilisateur
-    $upn = $sam + '@' + $societedns
-    $attributs_utilisateur_reference = Get-ADUser -Identity $samaccountreference -Properties StreetAddress, City, Title, PostalCode, Office, Department, Manager, co, st, Company
-  }
-  process {
-    #creation de du compte ad de l utilisateur
-    New-ADUser -Name $fullName -GivenName $prenom -Surname $nom -EmailAddress $email -SamAccountName $sam -DisplayName $fullName -UserPrincipalName $upn -Instance $attributs_utilisateur_reference  -AccountPassword (ConvertTo-SecureString $motdepasse -AsPlainText -Force) -ChangePasswordAtLogon $false -Enabled $true -PasswordNeverExpires $false
-    $groupes_utilisateur_references = Get-ADPrincipalGroupMembership -Identity $samaccountreference 
-    Add-ADPrincipalGroupMembership -Identity $sam -MemberOf $groupes_utilisateur_references
-    Set-ADUser -Identity $sam -Add @{proxyAddresses = "SMTP:$email" } 
-    $OU = ((Get-ADUser -Identity $samaccountreference).DistinguishedName -split '(?<!\\),', 2)[-1]
-    $utilisateur = Get-ADUser -Identity $sam
-    $utilisateur | move-ADObject -TargetPath $OU
-    #ceation dossier utilisateur SCAN
-    if ($creationdossiersmb) {
-      $dossier_utilisateur = $prenom.toupper().Substring(0, 1) + $nom.toupper().Substring(0, 2)
-      Invoke-Command -ComputerName srv-fs01 -ScriptBlock { new-item "D:\Rocard\Commun\Scan\Individuel\dossier_utilisateur" -Type directory }
-    }
-  }
-  end {
-    #Forcer synchro AD connect
-    Start-ADSyncSyncCycle -PolicyType initial
-    Start-Sleep -Seconds 1800
-    $usageLocation = 'FR'
-    Connect-MgGraph -Scopes "User.Read.All", "Group.Read.All", "Directory.ReadWrite.All"
-    update-mguser -UserId $upn -usagelocation $usageLocation
-    Set-MgUserLicense -UserId (Get-MgUser -UserId $upn).Id -Addlicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870’ } -RemoveLicenses @()
-    #resume des infos de l utilisateur
-    line
-    Write-Host "-----------------------------------------resume utilisateur-----------------------------------------------------"
-    Get-MgUser -UserId $upn | Select ID, GivenName, Surname, DisplayName, UserPrincipalName, Mail, proxyAddresses, JobTitle, Department, OfficeLocation, AssignedLicenses
-    Write-Host "-----------------------------------------groupes de l utilisateur-----------------------------------------------"
-    Get-MgUserTransitiveMemberOf -UserId $upn -Property displayName | ? { $_.AdditionalProperties.'@odata.type' -eq "#microsoft.graph.group" } | select @{n = "Name"; e = { $_.AdditionalProperties.displayName } } 
-    Get-MgUserOwnedObject -UserId $upn -Property id, displayName | select @{n = "Name"; e = { $_.AdditionalProperties.displayName } }
-    Write-Host "----------------------------------licences Microsoft 365 de l utilisateur---------------------------------------"
-    Get-MgUserLicenseDetail -UserId $upn | select SkuPartNumber, ServicePlans | ft -AutoSize
-    line
+
+        # Récupérer le jeton d'accès
+        $Connection = Invoke-RestMethod -Uri "https://login.microsoftonline.com/$TenantId/oauth2/v2.0/token" -Method POST -Body $Body
+
+        # Récupérer le jeton d'accès
+        $token = $Connection.access_token
+
+        # Convertir le jeton d'accès en SecureString
+        $SecureToken = ConvertTo-SecureString $token -AsPlainText -Force
+
+        # Se connecter à Microsoft Graph en utilisant le jeton d'accès sécurisé
+        Connect-MgGraph -AccessToken $SecureToken
+        #Attribution de la licence 365
+        foreach ($utilisateur in $utilisateurs) {
+            $usageLocation = 'FR'
+            update-mguser -UserId $utilisateur.UserPrincipalName -usagelocation $usageLocation
+            Set-MgUserLicense -UserId $utilisateur.Id -AddLicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870' } -RemoveLicenses @()
+            Write-Host "----------------------------------licences Microsoft 365 de l utilisateur---------------------------------------"
+            Get-MgUserLicenseDetail -UserId $upn | select-object SkuPartNumber, ServicePlans | Format-Table -AutoSize
+        }
     Write-Host "----------------------------------licences Microsoft 365 utilisees----------------------------------------------"
     Get-MgSubscribedSku
-  }
+    }
 }

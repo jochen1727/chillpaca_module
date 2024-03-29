@@ -1,4 +1,43 @@
-# fonction cp_365_createuser
+<#                                                                                              
+      ⡾⣦⡀⠀⠀⡀⠀⣰⢷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+  ⠀⣠⠗⠛⠽⠛⠋⠉⢳⡃⢨⢧⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⣰⠋⠁⠀⠀⠀   ⠀⠙⠛⢾⡈⡏⢧⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                   
+⣼⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠘⢧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠸⢦⡀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⢈⠟⠓⠶⠞⠒⢻⣿⡏⢳⡀⠀⠀⠀⠀⢸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⡴⢉⠀⠀⠀⠀⠀⠈⠛⢁⣸⠇⠀⠀⠀⠀⢺⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⢧⣸⡁⠀⠀⣀⠀⠀⣠⠾⠀⠀⠀⠀⠀⠀⣹⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠉⠓⢲⠾⣍⣀⣀⡿⠃⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⡗⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣸⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠺⠦⠤⠤⣤⣄⣀⣀⡀⠀⠀⠀⠀⠀
+⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠳⣦⣄⠀⠀
+⠀⠀⢀⡷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣆⠀
+⠀⠀⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣆
+⠀⠀⣏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿
+⠀⠀⢹⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼
+⠀⠀⠀⣏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡞
+⠀⠀⠀⠈⢷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡇
+⠀⠀⠀⠀⠈⢻⣦⣀⠀⣏⠀⠀⠀⠀⠀⠀⢸⡆⠀⠀⢠⡄⠀⠀⠀⠀⠀⢀⡿⠀
+⠀⠀⠀⠀⠀⠀⠻⡉⠙⢻⡆⠀⠀⠀⠀⠀⡾⠚⠓⣖⠛⣧⡀⠀⠀⠀⢀⡾⠁⠀
+⠀⠀⠀⠀⠀⠀⠀⠙⡇⢀⡿⣦⡀⠀⢀⡴⠃⠀⠀⠈⣷⢈⠷⡆⠀⣴⠛⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠛⠚⠀⢸⡇⣰⠏⠁⠀⠀⠀⠀⢉⠁⢸⠷⠼⠃⠀
+
+#>
+#########################################################################################################chillpaca_365_createuser#################################################################################################################################
+<#
+.SYNOPSIS
+Fonction de creation d'un utilisateur dans Microsoft 365 et attribution d'une licence 365 microsoft
+.DESCRIPTION
+Fonction de creation d'un utilisateur dans Microsoft 365 et attribution d'une licence 365 microsoft à partir de caracteristiques dans un fichier csv.
+.EXAMPLE
+cp_365_createuser -cheminfichiercsv "emplacement du fichier csv"
+.LINK
+https://github.com/jochen1727/
+.NOTES
+#>
 function cp_365_createuser {
     param (
         [parameter(mandatory = $true)]
@@ -10,9 +49,9 @@ function cp_365_createuser {
         Install-Module -Name Microsoft.Graph
         install-module -name Microsoft.Graph.Beta.Users
         # Connexion mggraph.
-        $ClientId = "9e622d1a-2ab0-410e-888e-fac34de0d1ad"
-        $TenantId = "c176a1c4-c9c2-405f-9f76-ab88af47ddc6"
-        $ClientSecret = "JXO8Q~TSoamLEs~M70792lh6Uw4HbhjeedV7bcOE"
+        $ClientId = "13f257d8-b7f4-486f-87f7-e287efc5ab9b"
+        $TenantId = "ad1d5291-d8d6-488c-8aed-1b731fd644d2"
+        $ClientSecret = "hrf8Q~o7x7QThabbON0lH3ebXb-w58qFefriEcxY"
         $Body = @{
             Grant_Type    = "client_credentials"
             Scope         = "https://graph.microsoft.com/.default"
@@ -64,7 +103,7 @@ function cp_365_createuser {
                         UserPrincipalName = $utilisateur.UserPrincipalName
                         Department        = $utilisateur.Department
                         JobTitle          = $utilisateur.JobTitle
-                        #  MobilePhone       = $utilisateur.MobilePhone
+                     #  MobilePhone       = $utilisateur.MobilePhone
                         Country           = $utilisateur.Country
                         AccountEnabled    = $true
                         PasswordProfile   = $PasswordProfile
@@ -85,10 +124,11 @@ function cp_365_createuser {
                     $listeutilisateurs += Get-MgBetaUser -UserId $utilisateur.UserPrincipalName | select-object -Property GivenName, Surname, DisplayName, MailNickName, Mail, UserPrincipalName, Department, JobTitle, Country, AccountEnabled,@{Name='Groupes'; Expression={"$($listeNomsMembres)"}}
                   
                   
-                    # Attribution de la licence 365
-                    #       $usageLocation = 'FR'
-                    #         update-mguser -UserId $utilisateur.UserPrincipalName -usagelocation $usageLocation
-                    #         Set-MgUserLicense -UserId $utilisateur.Id -AddLicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870' } -RemoveLicenses @()
+                    #Attribution de la licence 365
+                    
+                    $usageLocation = 'FR'
+                    update-mguser -UserId $utilisateur.UserPrincipalName -usagelocation $usageLocation
+                    Set-MgUserLicense -UserId $utilisateur.Id -AddLicenses @{SkuId = '3b555118-da6a-4418-894f-7df1e2096870' } -RemoveLicenses @()
                 }
             }
             Catch {

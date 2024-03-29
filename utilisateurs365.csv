@@ -1,0 +1,4 @@
+GivenName,Surname,DisplayName,UserPrincipalName,Mail,MailNickName,Department,JobTitle,MobilePhone,Country,Password,Groupes,
+John,Doe,John Doe,john.doe@chillpaca.onmicrosoft.com,john.doe@chillpaca.onmicrosoft.com,john.doenick,it,admin,,france,Azerty123456!,test;test2,
+John2,Doe2,John Doe2,john.doe2@chillpaca.onmicrosoft.com,john.doe2@chillpaca.onmicrosoft.com,john.doe2nick,it,admin,,france,Azerty123456!,test;test2,
+adribg,adribg,adri bg,adribg@chillpaca.onmicrosoft.com,adribg@chillpaca.onmicrosoft.com,adribg,ceo,admin,,france,Azerty123456!,test;test2,
