@@ -45,10 +45,14 @@ indiquer le nom de la personne a creer
 indiquer le samaccountreference de la personne de reference pour copier ses attributs
 .PARAMETER motdepasse
 indiquer le mot de passe de la personne (entre 12 et 20 characteres avec une majuscule, un chiffre et un charactere special '[!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?]`")
+.PARAMETER societe
+indiquer la societe de la personne voulu pour parametrer l upn, email ....
 .PARAMETER creationdossiersmb
 indiquer si oui ou non créé un dossier smb pour l utilisateur
+.PARAMETER activerlicence365
+indiquer si on veut créér une licence 365 pour l utilisateur
 .EXAMPLE
-cp_ad_createuser -prenom john -nom doe -motdepasse azertyAZERTY_ -societe masociete -$identifiantmicrosoftentra
+cp_ad_createuser -prenom john -nom doe -samaccountreference jdoe2 -motdepasse azertyAZERTY_ -societe masociete -creationdossiersmb -activerlicence365
 .LINK
 https://github.com/jochen1727/
 .NOTES
@@ -74,26 +78,29 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
     [switch]$activerlicence365
   )
   #installations et importations modules si besoins
-  Write-Host "-----------------------------------------installation et importations modules si necessaire----------------------------------------------------"
+  Write-Host "-----------------------------------------installation RSAT et importations modules si necessaire----------------------------------------------------"
   $feature = Get-WindowsFeature -Name "RSAT-AD-PowerShell"
   if (-not $feature.Installed) {
-    Add-WindowsFeature -Name "RSAT-AD-PowerShell" -IncludeAllSubFeature
+    Install-WindowsFeature -Name "RSAT-AD-PowerShell" -IncludeAllSubFeature
   }
   else {
     Write-Host "La fonctionnalité 'RSAT-AD-PowerShell' est déjà installée."
   }
-  if (-not (Get-Module -Name Microsoft.Graph -ListAvailable -ErrorAction SilentlyContinue)) {
-    Write-Host "Le module MSGraph alpha n'est pas installé. Installation en cours..."
-    # Installer le module MSGraph alpha 
+  if (-not (Get-Module -Name Microsoft.Graph.Beta -ListAvailable -ErrorAction SilentlyContinue)) {
+    Write-Host "Le module MSGraph beta n'est pas installé. Installation en cours..."
+    # Installer le module MSGraph beta 
     try {
-      Install-Module -Name Microsoft.Graph -AllowPrerelease -Scope AllUsers -Force -Verbose
-      Write-Host "Le module MSGraph alpha a été installé avec succès."
+      Install-Module -Name Microsoft.Graph.Beta -AllowPrerelease -Scope AllUsers -Force -Verbose
+      Write-Host "Le module MSGraph beta a été installé avec succès."
     }
     catch {
-      Write-Host "Une erreur s'est produite lors de l'installation du module MSGraph alpha : $_" -ForegroundColor Red
+      Write-Host "Une erreur s'est produite lors de l'installation du module MSGraph beta : $_" -ForegroundColor Red
     }
   }
-  else { (write-host "Le module Ms Graph est déjà installéé.") }
+  else {
+ (write-host "Le module Ms Graph est déjà installéé.`n importation du module Microsoft.Graph.Beta")
+    import-module -name Microsoft.Graph.Beta
+  }
   #fonction supprimer caracteres latin       
   function removestringlatincharacters {
     param (
@@ -193,9 +200,8 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
     Invoke-Command -ComputerName srv-fs01 -ScriptBlock { new-item "D:\Rocard\Commun\Scan\Individuel\${using:dossier_utilisateur}" -Type directory }
     
   }
-  #Forcer synchro AD connect
+  #Connexion a Msgraph avec les infos de l application
   if ($activerlicence365) {
-    # Connexion mggraph.
     $ClientId = "13f257d8-b7f4-486f-87f7-e287efc5ab9b"
     $TenantId = "ad1d5291-d8d6-488c-8aed-1b731fd644d2"
     $ClientSecret = "hrf8Q~o7x7QThabbON0lH3ebXb-w58qFefriEcxY"
@@ -218,6 +224,7 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
     Start-Sleep -Seconds 1800
     $usageLocation = 'FR'
     update-mguser -UserId (Get-MgUser -UserId $upn).Id -usagelocation $usageLocation
+    # Ajout de la licence 365 desire a l utilisateur
     # Liste des applications à désactiver
     $apps = @(
       "Bing_Chat_Enterprise",
@@ -265,7 +272,7 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
     }
     Set-MgUserLicense -UserId (Get-MgUser -UserId $upn).Id -Addlicenses $addLicenses -RemoveLicenses @() 
   }
-    if ($activerlicence365) {
+  if ($activerlicence365) {
     Write-Host "----------------------------------licences Microsoft 365 de l utilisateur---------------------------------------"
     Get-MgUserLicenseDetail -UserId (Get-MgUser -UserId $upn).Id | select-object SkuPartNumber, ServicePlans | format-table -AutoSize
     Write-Host "----------------------------------licences Microsoft 365 utilisees----------------------------------------------"

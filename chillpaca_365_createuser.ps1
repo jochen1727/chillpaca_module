@@ -46,8 +46,7 @@ function cp_365_createuser {
 
     begin {
         # Installation du module Microsoft Graph API si besoin et importation.
-        Install-Module -Name Microsoft.Graph
-        install-module -name Microsoft.Graph.Beta.Users
+        install-module -name Microsoft.Graph.Beta
         # Connexion mggraph.
         $ClientId = "13f257d8-b7f4-486f-87f7-e287efc5ab9b"
         $TenantId = "ad1d5291-d8d6-488c-8aed-1b731fd644d2"

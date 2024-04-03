@@ -1,4 +1,3 @@
-
 <#                                                                                              
       ⡾⣦⡀⠀⠀⡀⠀⣰⢷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
   ⠀⣠⠗⠛⠽⠛⠋⠉⢳⡃⢨⢧⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -29,6 +28,7 @@
 #>
 #########################################################################################################commandes utiles powershell#################################################################################################################################
 #################################################################################################IP###########################################################################################################################################################
+Get-NetIPConfiguration
 Get-NetAdapter
 Disable-NetAdapter 
 New-NetIPAddress
@@ -38,13 +38,13 @@ Restart-NetAdapter
 Set-DnsClientServerAddress
 #################################################################################################Fichiers###########################################################################################################################################################
 # obtenir taille gros fichiers
-Get-ChildItem -Recurse -File | where-object-Object { $_.Length -gt 100MB } | Select-Object Name, FullName, @{n="SizeGB";e={"{0:N2}" -f ($_.Length / 1000MB)}} | export-csv files.csv
+Get-ChildItem -Recurse -File | where-object-Object { $_.Length -gt 100MB } | Select-Object Name, FullName, @{n = "SizeGB"; e = { "{0:N2}" -f ($_.Length / 1000MB) } } | export-csv files.csv
 # obtenir taille dossiers
-Get-ChildItem -Path c:\ -Depth 2  | Measure-Object -Property Length -Sum | Select-Object @{Name="Size";Expression={"{0:N2} {1}" -f ($_.Sum / 1GB), "GB"}}
+Get-ChildItem -Path c:\ -Depth 2  | Measure-Object -Property Length -Sum | Select-Object @{Name = "Size"; Expression = { "{0:N2} {1}" -f ($_.Sum / 1GB), "GB" } }
 # recherche un type de fichier
-ls -Path "C:\" -Recurse -file -Exclude "C:\Users","C:\Windows" -ErrorAction SilentlyContinue | where {$_.Name -match "\.dmp"} | rm -force
+ls -Path "C:\" -Recurse -file -Exclude "C:\Users", "C:\Windows" -ErrorAction SilentlyContinue | where { $_.Name -match "\.dmp" } | rm -force
 # taille disque
-Get-PSDrive C -PSProvider FileSystem | Select-Object Name, @{Name="Taille totale (Go)";Expression={[math]::Round($_.Used + $_.Free) / 1GB}}, @{Name="Espace utilisé (Go)";Expression={[math]::Round($_.Used / 1GB)}}, @{Name="Espace libre (Go)";Expression={[math]::Round($_.Free / 1GB)}}
+Get-PSDrive C -PSProvider FileSystem | Select-Object Name, @{Name = "Taille totale (Go)"; Expression = { [math]::Round($_.Used + $_.Free) / 1GB } }, @{Name = "Espace utilisé (Go)"; Expression = { [math]::Round($_.Used / 1GB) } }, @{Name = "Espace libre (Go)"; Expression = { [math]::Round($_.Free / 1GB) } }
 ################################################################################################ Microsoft 365######################################################################################################################################################
 # gerer microsoft 365 avec microsoft graph
 Install-Module Microsoft.Graph -Scope "User.ReadWrite.All", "Group.ReadWrite.All", "Directory.ReadWrite.All" -AllowClobber -Force 
@@ -58,15 +58,15 @@ Add-MailboxPermission -Identity "dijon lph" -user msinssaine@lepolerh.com -acces
 set-mailboxfolderPermission -Identity "Chatillon-SALLE@crowe-rocard.fr:\calendar" -user -AccessRights reviewer
 Remove-MailboxPermission -Identity "dijon lph" -user msinssaine@lepolerh.com -AccessRights fullaccess -Confirm:$false
 #ajout BAL pour plusieurs utilisateurs
-Get-Mailbox | where-object-object -property name -match salle | foreach-object-object {Add-MailboxPermission -Identity $_.name -User emorizot@crowe-rocard.fr -AccessRights fullaccess -InheritanceType all}
+Get-Mailbox | where-object-object -property name -match salle | foreach-object-object { Add-MailboxPermission -Identity $_.name -User emorizot@crowe-rocard.fr -AccessRights fullaccess -InheritanceType all }
 #envoye en tant que
 Add-RecipientPermission -Identity <boite_aux_lettres> -Trustee <utilisateur> -AccessRights SendAs
 #envoye en tant que pour plusieurs utilisateurs
-Get-Mailbox | where-object -property name -match salle | foreach-object {Add-RecipientPermission -Identity $_.name -Trustee fvermi@crowe-rocard.fr -AccessRights sendas -Confirm:$false }
+Get-Mailbox | where-object -property name -match salle | foreach-object { Add-RecipientPermission -Identity $_.name -Trustee fvermi@crowe-rocard.fr -AccessRights sendas -Confirm:$false }
 #envoye de la part de
 Set-Mailbox -Identity <boite_aux_lettres> -GrantSendOnBehalfTo <utilisateur>
 #envoye de la part de pour plusieurs utilisateurs
-Get-Mailbox | where-object -property name -match salle | foreach-object {Set-Mailbox -Identity <boite_aux_lettres> -GrantSendOnBehalfTo <utilisateur> -confirm:$false }
+Get-Mailbox | where-object -property name -match salle | foreach-object { Set-Mailbox -Identity <boite_aux_lettres> -GrantSendOnBehalfTo <utilisateur> -confirm:$false }
 #cache une BAL de la GAL
 Set-Mailbox "nom_boite_aux_lettres" -HiddenFromAddressListsEnabled $true
 #activer l envoi depuis un alias
@@ -76,13 +76,13 @@ Set-OrganizationConfig -SendFromAliasEnabled $True
 #licence azure
 #https://learn.microsoft.com/en-us/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide
 $e5Sku = Get-MgSubscribedSku -All | Where SkuPartNumber -eq 'SPE_E5'
-Set-MgUserLicense -UserId $upn -AddLicenses @{SkuId = $e5Sku.SkuId} -RemoveLicenses @()
+Set-MgUserLicense -UserId $upn -AddLicenses @{SkuId = $e5Sku.SkuId } -RemoveLicenses @()
 #################################################################################################controleur de domaine###################################################################################################################################################
 #voir soucis replication
 Get-ADReplicationFailure –Scope DOMAIN –Target mondomaine
 #infos pour les replications dc
 Get-ADReplicationPartnerMetadata -Target dc
-Get-ADReplicationPartnerMetadata –Target * -Scope Server | Where {$_.LastReplicationResult –ne "0"} | Format-Table Server, LastReplicationAttempt, LastReplicationResult, Partner, Site
+Get-ADReplicationPartnerMetadata –Target * -Scope Server | Where { $_.LastReplicationResult –ne "0" } | Format-Table Server, LastReplicationAttempt, LastReplicationResult, Partner, Site
 Get-ADReplicationQueueOperation -Server dc
 Get-ADReplicationAttributeMetadata -Object "DC=test,DC=local" -Server dc -ShowAllLinkedValues
 #infos pour les replications sites
@@ -97,3 +97,4 @@ repadmin /syncall /Aped
 repadmin /showrepl
 repadmin /replsum
 
+get-winEvent -logname system | where { $_.Message -match 'com' -and $_.Message -Match 'clsid' } | sort -Property TimeCreated -Descending | select -First 20
