@@ -9,7 +9,7 @@
 @{
 
 # Script module or binary module file associated with this manifest.
-# RootModule = ''
+RootModule = './chillpaca_module.psm1'
 
 # Version number of this module.
 ModuleVersion = '0.0.1'
@@ -24,7 +24,7 @@ GUID = '8854ea39-1632-43fa-89ab-4d1099e88acc'
 Author = 'chillpaca'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'chillpaca_sa'
 
 # Copyright statement for this module
 Copyright = '(c) chillpaca. All rights reserved.'
@@ -69,10 +69,10 @@ Copyright = '(c) chillpaca. All rights reserved.'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @()
+FunctionsToExport = '*'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @()
+CmdletsToExport = '*'
 
 # Variables to export from this module
 VariablesToExport = '*'

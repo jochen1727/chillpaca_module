@@ -98,3 +98,8 @@ repadmin /showrepl
 repadmin /replsum
 
 get-winEvent -logname system | where { $_.Message -match 'com' -and $_.Message -Match 'clsid' } | sort -Property TimeCreated -Descending | select -First 20
+#################################################################################################droits##################################################################################################################################################
+# methode AGDLP account ==> group global ==> domlain local group ==> partage
+Get-Acl ==> ntfs 
+Get-SmbShare ==> smb   
+klist -li 0x3e7 purge  ==> purger ticket 

@@ -83,6 +83,8 @@ $bureautique=@(
 "sumatrapdf"
 "onenote"
 "tor-browser"
+"advanced-ipscanner"
+"nmap"
 )
 $jeux=@(
 "steam"

@@ -43,10 +43,23 @@ function cp_365_createuser {
         [parameter(mandatory = $true)]
         [string]$cheminfichiercsv
     )
-
+    #installations et importations modules si besoins
     begin {
-        # Installation du module Microsoft Graph API si besoin et importation.
-        install-module -name Microsoft.Graph.Beta
+        if (-not (Get-Module -Name Microsoft.Graph.Beta -ListAvailable -ErrorAction SilentlyContinue)) {
+            Write-Host "Le module MSGraph beta n'est pas installé. Installation en cours..."
+            # Installer le module MSGraph beta 
+            try {
+                Install-Module -Name Microsoft.Graph.Beta -AllowPrerelease -Scope AllUsers -Force -Verbose
+                Write-Host "Le module MSGraph beta a été installé avec succès."
+            }
+            catch {
+                Write-Host "Une erreur s'est produite lors de l'installation du module MSGraph beta : $_" -ForegroundColor Red
+            }
+        }
+        else {
+         (write-host "Le module Ms Graph est déjà installéé.`nimportation du module Microsoft.Graph.Beta")
+            import-module -name Microsoft.Graph.Beta
+        }
         # Connexion mggraph.
         $ClientId = "13f257d8-b7f4-486f-87f7-e287efc5ab9b"
         $TenantId = "ad1d5291-d8d6-488c-8aed-1b731fd644d2"
@@ -102,7 +115,7 @@ function cp_365_createuser {
                         UserPrincipalName = $utilisateur.UserPrincipalName
                         Department        = $utilisateur.Department
                         JobTitle          = $utilisateur.JobTitle
-                     #  MobilePhone       = $utilisateur.MobilePhone
+                        #  MobilePhone       = $utilisateur.MobilePhone
                         Country           = $utilisateur.Country
                         AccountEnabled    = $true
                         PasswordProfile   = $PasswordProfile
@@ -118,9 +131,9 @@ function cp_365_createuser {
                         $odadaID = "https://graph.microsoft.com/v1.0/users/" + [System.Uri]::EscapeDataString($utilisateur.UserPrincipalName)
                         New-MgGroupMemberByRef -GroupId $GroupId -OdataId $odadaID -erroraction SilentlyContinue
                     }
-                                      # Affichage des infos utilisateurs
+                    # Affichage des infos utilisateurs
                   
-                    $listeutilisateurs += Get-MgBetaUser -UserId $utilisateur.UserPrincipalName | select-object -Property GivenName, Surname, DisplayName, MailNickName, Mail, UserPrincipalName, Department, JobTitle, Country, AccountEnabled,@{Name='Groupes'; Expression={"$($listeNomsMembres)"}}
+                    $listeutilisateurs += Get-MgBetaUser -UserId $utilisateur.UserPrincipalName | select-object -Property GivenName, Surname, DisplayName, MailNickName, Mail, UserPrincipalName, Department, JobTitle, Country, AccountEnabled, @{Name = 'Groupes'; Expression = { "$($listeNomsMembres)" } }
                   
                   
                     #Attribution de la licence 365

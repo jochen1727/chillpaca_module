@@ -98,7 +98,7 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
     }
   }
   else {
- (write-host "Le module Ms Graph est déjà installéé.`n importation du module Microsoft.Graph.Beta")
+ (write-host "Le module Ms Graph est déjà installéé.`nimportation du module Microsoft.Graph.Beta")
     import-module -name Microsoft.Graph.Beta
   }
   #fonction supprimer caracteres latin       
@@ -270,13 +270,13 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
       SkuId         = $o365Sku.SkuId
       DisabledPlans = $filteredPlans.serviceplanid
     }
-    Set-MgUserLicense -UserId (Get-MgUser -UserId $upn).Id -Addlicenses $addLicenses -RemoveLicenses @() 
+    Set-MgUserLicense -UserId (Get-MgUser -UserId $upn).Id -Addlicenses $addLicenses -RemoveLicenses @() -ErrorAction Ignore -Wharn
   }
   if ($activerlicence365) {
     Write-Host "----------------------------------licences Microsoft 365 de l utilisateur---------------------------------------"
-    Get-MgUserLicenseDetail -UserId (Get-MgUser -UserId $upn).Id | select-object SkuPartNumber, ServicePlans | format-table -AutoSize
+    Get-MgUserLicenseDetail -UserId (Get-MgUser -UserId $upn).Id | select-object SkuPartNumber, ServicePlans | format-table -Wrap
     Write-Host "----------------------------------licences Microsoft 365 utilisees----------------------------------------------"
-    Get-MgSubscribedSku
+    Get-MgSubscribedSku | select SkuId, SkuPartNumber,ConsumedUnits,ServicePlans | ft -AutoSize
   }
 }
 
