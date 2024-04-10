@@ -71,8 +71,6 @@ Get-Mailbox | where-object -property name -match salle | foreach-object { Set-Ma
 Set-Mailbox "nom_boite_aux_lettres" -HiddenFromAddressListsEnabled $true
 #activer l envoi depuis un alias
 Set-OrganizationConfig -SendFromAliasEnabled $True
-
-
 #licence azure
 #https://learn.microsoft.com/en-us/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide
 $e5Sku = Get-MgSubscribedSku -All | Where SkuPartNumber -eq 'SPE_E5'
@@ -96,7 +94,6 @@ Sync-ADObject -Object 'DC=Domain,DC=local' -Source dc
 repadmin /syncall /Aped
 repadmin /showrepl
 repadmin /replsum
-
 get-winEvent -logname system | where { $_.Message -match 'com' -and $_.Message -Match 'clsid' } | sort -Property TimeCreated -Descending | select -First 20
 #################################################################################################droits##################################################################################################################################################
 # methode AGDLP account ==> group global ==> domlain local group ==> partage

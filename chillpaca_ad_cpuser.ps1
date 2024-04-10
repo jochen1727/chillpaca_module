@@ -72,7 +72,7 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
     [ValidateScript({ ($_ -match "[A-Z]") -and ($_ -match "[0-9]") -and ($_ -match "[!@#$%^&*()_+\-=\[\]{};:'\\|,.<>\/?]" ) })]
     [string]$motdepasse,
     [parameter(mandatory = $true)]
-    [ValidateSet("lprh", "equinoxe", "rocard")]
+    [ValidateSet("societe1", "societe2", "societe3")]
     [string]$societe,
     [switch]$creationdossiersmb,
     [switch]$activerlicence365
@@ -115,13 +115,13 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
   #Adresse email de la personne selon sa societe
   switch ($societe) {
     "lprh" {
-      $societedns = "lepolerh.com"
+      $societedns = "societe1"
     }
     "equinoxe" {
-      $societedns = "equinoxe-expert.com"
+      $societedns = "societe2"
     }
     "rocard" {
-      $societedns = "crowe-rocard.fr"
+      $societedns = "societe3"
     }
   }
   $email = $prenom + "." + $nom + "@" + $societedns
@@ -202,9 +202,9 @@ possibilite de se connecter a distance avec la commande invoke-command -computer
   }
   #Connexion a Msgraph avec les infos de l application
   if ($activerlicence365) {
-    $ClientId = "13f257d8-b7f4-486f-87f7-e287efc5ab9b"
-    $TenantId = "ad1d5291-d8d6-488c-8aed-1b731fd644d2"
-    $ClientSecret = "hrf8Q~o7x7QThabbON0lH3ebXb-w58qFefriEcxY"
+    $ClientId = ""
+    $TenantId = ""
+    $ClientSecret = ""
     $Body = @{
       Grant_Type    = "client_credentials"
       Scope         = "https://graph.microsoft.com/.default"
